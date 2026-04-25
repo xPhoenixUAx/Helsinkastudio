@@ -8,6 +8,7 @@
   var form = document.querySelector("[data-contact-form]");
   var desktopHeaderQuery = window.matchMedia("(min-width: 981px)");
   var headerScrollBound = false;
+  var progressTicking = false;
 
   function setHeaderState() {
     if (!header) return;
@@ -32,6 +33,20 @@
     }
 
     setHeaderState();
+  }
+
+  function updateScrollProgress() {
+    var scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+    var scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    var progress = Math.min(1, Math.max(0, scrollTop / scrollable));
+    body.style.setProperty("--scroll-progress", progress.toFixed(4));
+    progressTicking = false;
+  }
+
+  function requestScrollProgress() {
+    if (progressTicking) return;
+    progressTicking = true;
+    window.requestAnimationFrame(updateScrollProgress);
   }
 
   function openMenu() {
@@ -92,11 +107,29 @@
   }
 
   function initReveal() {
-    var items = document.querySelectorAll(".service-card, .service-block, .text-block:not(.why-card), .process-grid article");
+    var items = document.querySelectorAll([
+      ".section-heading",
+      ".insight-card",
+      ".service-card",
+      ".service-block",
+      ".service-offer-grid article",
+      ".offer-paths__grid article",
+      ".offer-direction-list article",
+      ".comparison-list article",
+      ".solution-direction-grid article",
+      ".solution-fit__cards article",
+      ".group-process article",
+      ".text-block:not(.why-card)",
+      ".process-grid article",
+      ".case-feature__cards article",
+      ".contact-note",
+      ".legal-content section"
+    ].join(", "));
     if (!("IntersectionObserver" in window) || !items.length) return;
 
-    items.forEach(function (item) {
+    items.forEach(function (item, index) {
       item.classList.add("reveal");
+      item.style.setProperty("--reveal-delay", Math.min(index % 4, 3) * 70 + "ms");
     });
 
     var observer = new IntersectionObserver(function (entries) {
@@ -397,7 +430,12 @@
     });
   }
 
+  body.classList.add("is-loaded");
+
   syncHeaderScrollBinding();
+  updateScrollProgress();
+  window.addEventListener("scroll", requestScrollProgress, { passive: true });
+  window.addEventListener("resize", requestScrollProgress);
   window.addEventListener("resize", syncHeaderScrollBinding);
   if (desktopHeaderQuery.addEventListener) {
     desktopHeaderQuery.addEventListener("change", syncHeaderScrollBinding);

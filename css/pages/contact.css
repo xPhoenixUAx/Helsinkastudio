@@ -10,6 +10,18 @@
   font-size: clamp(34px, 4.8vw, 62px);
 }
 
+.contact-hero__inner > * {
+  animation: fade-up .78s var(--ease-out) both;
+}
+
+.contact-hero__inner > *:nth-child(2) {
+  animation-delay: .08s;
+}
+
+.contact-hero__inner > *:nth-child(3) {
+  animation-delay: .16s;
+}
+
 .contact-hero p:not(.eyebrow) {
   max-width: 680px;
   color: var(--color-ink);
@@ -42,6 +54,12 @@
   top: calc(var(--header-height) + 42px);
   border-left: 2px solid var(--color-accent);
   padding-left: clamp(22px, 3vw, 34px);
+  transition: border-left-width .28s var(--ease-out), transform .28s var(--ease-out);
+}
+
+.contact-note:hover {
+  border-left-width: 5px;
+  transform: translateX(6px);
 }
 
 .contact-note p {
@@ -92,6 +110,7 @@
   width: 100%;
   height: clamp(360px, 48vw, 560px);
   border: 0;
+  filter: saturate(.86) contrast(1.02);
 }
 
 @media (max-width: 900px) {

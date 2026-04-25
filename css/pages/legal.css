@@ -1,3 +1,15 @@
+.legal-hero .container > * {
+  animation: fade-up .78s var(--ease-out) both;
+}
+
+.legal-hero .container > *:nth-child(2) {
+  animation-delay: .08s;
+}
+
+.legal-hero .container > *:nth-child(3) {
+  animation-delay: .16s;
+}
+
 .legal-hero .legal-date {
   margin-top: 24px;
   color: var(--color-ink);
