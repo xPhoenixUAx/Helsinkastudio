@@ -505,6 +505,155 @@
     });
   }
 
+  function initCookieConsent() {
+    var cookieName = "cookie_consent";
+    var existingConsent = readCookieConsent(cookieName);
+    var root = document.createElement("div");
+
+    root.className = "cookie-consent";
+    root.hidden = true;
+    root.innerHTML = [
+      '<section class="cookie-consent__banner" data-cookie-banner role="region" aria-label="Cookie notice">',
+      '<p class="eyebrow">Cookie preferences</p>',
+      '<h2>We use cookies to keep the website useful.</h2>',
+      '<p>Essential cookies keep the site working. With your consent, analytics and marketing cookies may help us understand website usage and improve campaigns. You can change your choice at any time in the footer.</p>',
+      '<p><a href="cookie-policy.html">Read the Cookie Policy</a></p>',
+      '<div class="cookie-consent__actions">',
+      '<button class="button button--small" type="button" data-cookie-accept>Accept All</button>',
+      '<button class="button button--small button--secondary" type="button" data-cookie-reject>Reject Non-Essential</button>',
+      '<button class="button button--small button--secondary" type="button" data-cookie-customize>Customize</button>',
+      '</div>',
+      '</section>',
+      '<div class="cookie-modal" data-cookie-modal hidden aria-hidden="true">',
+      '<div class="cookie-modal__panel" role="dialog" aria-modal="true" aria-labelledby="cookie-preferences-title">',
+      '<p class="eyebrow">Cookie settings</p>',
+      '<h2 id="cookie-preferences-title">Manage cookie preferences</h2>',
+      '<label class="cookie-option"><input type="checkbox" checked disabled><span>Strictly necessary cookies</span><p>Required for core website functionality, privacy preferences, and form protection.</p></label>',
+      '<label class="cookie-option"><input type="checkbox" data-cookie-category="analytics"><span>Analytics cookies</span><p>Help us understand which pages are useful and where the website can be improved.</p></label>',
+      '<label class="cookie-option"><input type="checkbox" data-cookie-category="marketing"><span>Marketing cookies</span><p>Support campaign measurement and remarketing when advertising tools are enabled.</p></label>',
+      '<div class="cookie-modal__actions">',
+      '<button class="button button--small" type="button" data-cookie-save>Save Preferences</button>',
+      '<button class="button button--small button--secondary" type="button" data-cookie-modal-close>Close</button>',
+      '</div>',
+      '</div>',
+      '</div>'
+    ].join("");
+
+    body.appendChild(root);
+
+    var banner = root.querySelector("[data-cookie-banner]");
+    var modal = root.querySelector("[data-cookie-modal]");
+    var settingsTriggers = Array.prototype.slice.call(document.querySelectorAll("[data-cookie-settings]"));
+    var analyticsInput = root.querySelector('[data-cookie-category="analytics"]');
+    var marketingInput = root.querySelector('[data-cookie-category="marketing"]');
+
+    function showRoot() {
+      root.hidden = false;
+    }
+
+    function hideRootIfIdle() {
+      if (banner.hidden && modal.hidden) root.hidden = true;
+    }
+
+    function showBanner() {
+      showRoot();
+      banner.hidden = false;
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function hideBanner() {
+      banner.hidden = true;
+      hideRootIfIdle();
+    }
+
+    function showModal() {
+      var current = readCookieConsent(cookieName) || { analytics: false, marketing: false };
+      analyticsInput.checked = Boolean(current.analytics);
+      marketingInput.checked = Boolean(current.marketing);
+      showRoot();
+      banner.hidden = true;
+      modal.hidden = false;
+      modal.setAttribute("aria-hidden", "false");
+      analyticsInput.focus();
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+      if (!readCookieConsent(cookieName)) {
+        showBanner();
+        return;
+      }
+      hideRootIfIdle();
+    }
+
+    function saveConsent(analytics, marketing) {
+      writeCookieConsent(cookieName, {
+        essential: true,
+        analytics: Boolean(analytics),
+        marketing: Boolean(marketing),
+        saved_at: new Date().toISOString()
+      });
+      banner.hidden = true;
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+      hideRootIfIdle();
+    }
+
+    root.querySelector("[data-cookie-accept]").addEventListener("click", function () {
+      saveConsent(true, true);
+    });
+
+    root.querySelector("[data-cookie-reject]").addEventListener("click", function () {
+      saveConsent(false, false);
+    });
+
+    root.querySelector("[data-cookie-customize]").addEventListener("click", showModal);
+
+    root.querySelector("[data-cookie-save]").addEventListener("click", function () {
+      saveConsent(analyticsInput.checked, marketingInput.checked);
+    });
+
+    root.querySelector("[data-cookie-modal-close]").addEventListener("click", closeModal);
+
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !modal.hidden) closeModal();
+    });
+
+    settingsTriggers.forEach(function (trigger) {
+      trigger.addEventListener("click", function () {
+        showModal();
+      });
+    });
+
+    if (!existingConsent) showBanner();
+  }
+
+  function readCookieConsent(cookieName) {
+    var cookies = document.cookie ? document.cookie.split("; ") : [];
+    var match = cookies.find(function (cookie) {
+      return cookie.indexOf(cookieName + "=") === 0;
+    });
+
+    if (!match) return null;
+
+    try {
+      return JSON.parse(decodeURIComponent(match.slice(cookieName.length + 1)));
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeCookieConsent(cookieName, preferences) {
+    var value = encodeURIComponent(JSON.stringify(preferences));
+    document.cookie = cookieName + "=" + value + "; Max-Age=31536000; Path=/; SameSite=Lax";
+  }
+
   body.classList.add("is-loaded");
 
   syncHeaderScrollBinding();
@@ -539,6 +688,7 @@
   initDropdownNav();
   initSiteSearch();
   initAccordions();
+  initCookieConsent();
   initGallerySlider();
   initScrollCards();
   initReveal();
