@@ -77,14 +77,14 @@
 }
 
 .offer-hero__note,
-.complete-offer__placeholder {
+.complete-offer__note {
   border-left: 2px solid var(--color-accent);
   background: var(--color-surface);
   padding: 22px;
 }
 
 .offer-hero__note span,
-.complete-offer__placeholder span {
+.complete-offer__note span {
   color: var(--color-ink);
   font-size: 11px;
   font-weight: 700;
@@ -93,7 +93,7 @@
 }
 
 .offer-hero__note p,
-.complete-offer__placeholder p {
+.complete-offer__note p {
   margin: 10px 0 0;
 }
 

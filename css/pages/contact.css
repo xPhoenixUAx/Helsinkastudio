@@ -54,9 +54,37 @@
 }
 
 .contact-map {
+  position: relative;
   width: 100%;
   margin-top: clamp(24px, 5vw, 72px);
   border-top: 1px solid var(--color-line);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.contact-map__address {
+  position: absolute;
+  z-index: 1;
+  left: clamp(18px, 5vw, 72px);
+  top: clamp(18px, 5vw, 54px);
+  max-width: 360px;
+  border-left: 2px solid var(--color-accent);
+  background: rgba(255, 255, 255, .92);
+  padding: 18px 22px;
+}
+
+.contact-map__address span {
+  display: block;
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+}
+
+.contact-map__address p {
+  margin: 10px 0 0;
+  color: var(--color-ink);
 }
 
 .contact-map iframe {
@@ -74,5 +102,11 @@
 
   .contact-note {
     position: static;
+  }
+
+  .contact-map__address {
+    position: static;
+    max-width: none;
+    margin: 0;
   }
 }
