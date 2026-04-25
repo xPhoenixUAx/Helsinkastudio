@@ -6,10 +6,32 @@
   var closeButton = document.querySelector("[data-menu-close]");
   var yearNodes = document.querySelectorAll("[data-year]");
   var form = document.querySelector("[data-contact-form]");
+  var desktopHeaderQuery = window.matchMedia("(min-width: 981px)");
+  var headerScrollBound = false;
 
   function setHeaderState() {
     if (!header) return;
+    if (!desktopHeaderQuery.matches) {
+      header.classList.add("is-scrolled");
+      return;
+    }
     header.classList.toggle("is-scrolled", window.scrollY > 8);
+  }
+
+  function syncHeaderScrollBinding() {
+    if (!header) return;
+
+    if (desktopHeaderQuery.matches && !headerScrollBound) {
+      window.addEventListener("scroll", setHeaderState, { passive: true });
+      headerScrollBound = true;
+    }
+
+    if (!desktopHeaderQuery.matches && headerScrollBound) {
+      window.removeEventListener("scroll", setHeaderState);
+      headerScrollBound = false;
+    }
+
+    setHeaderState();
   }
 
   function openMenu() {
@@ -220,8 +242,168 @@
     });
   }
 
-  window.addEventListener("scroll", setHeaderState, { passive: true });
-  setHeaderState();
+  function initSiteSearch() {
+    var search = document.querySelector("[data-site-search]");
+    if (!search) return;
+
+    var input = search.querySelector("[data-search-input]");
+    var results = search.querySelector("[data-search-results]");
+    if (!input || !results) return;
+
+    var pages = [
+      {
+        title: "All Services",
+        url: "services.html",
+        label: "Service offer",
+        keywords: "services offer individual services direction packages complete solution marketing strategy paid advertising web design website development frontend backend landing pages conversion content analytics maintenance"
+      },
+      {
+        title: "Strategy & Planning",
+        url: "strategy-planning.html",
+        label: "Direction",
+        keywords: "strategy planning marketing strategy performance marketing paid social search advertising analytics reporting positioning audience channel plan campaign path measurement"
+      },
+      {
+        title: "Design & Content",
+        url: "design-content.html",
+        label: "Direction",
+        keywords: "design content web design landing page creation conversion optimization creative production content strategy messaging wireframes page logic UI UX copy"
+      },
+      {
+        title: "Development & Support",
+        url: "development-support.html",
+        label: "Direction",
+        keywords: "development support website development frontend backend php forms email marketing systems launch maintenance responsive code technical support"
+      },
+      {
+        title: "Complete Solution",
+        url: "service-detail.html",
+        label: "Full-cycle cooperation",
+        keywords: "complete solution full cycle cooperation strategy design content development launch support analytics maintenance project roadmap"
+      },
+      {
+        title: "Home",
+        url: "index.html",
+        label: "Overview",
+        keywords: "helsinka studio full cycle digital partner marketing web design development launch support homepage process case study"
+      },
+      {
+        title: "About",
+        url: "about.html",
+        label: "Company",
+        keywords: "about helsinka studio digital partner company approach principles address specialist network project team"
+      },
+      {
+        title: "Contact",
+        url: "contact.html",
+        label: "Project inquiry",
+        keywords: "contact start project inquiry email support budget timeline form cooperation"
+      },
+      {
+        title: "Privacy Policy",
+        url: "privacy.html",
+        label: "Legal",
+        keywords: "privacy policy data contact form email communication website usage cookies analytics user rights"
+      },
+      {
+        title: "Terms of Service",
+        url: "terms.html",
+        label: "Legal",
+        keywords: "terms service website use proposals project scope intellectual property third party tools liability"
+      },
+      {
+        title: "Cookie Policy",
+        url: "cookie-policy.html",
+        label: "Legal",
+        keywords: "cookie policy cookies analytics marketing cookies consent google meta tracking preferences opt out"
+      }
+    ];
+
+    function normalize(value) {
+      return value.toLowerCase().trim();
+    }
+
+    function getMatches(query) {
+      var words = normalize(query).split(/\s+/).filter(Boolean);
+      if (!words.length) return [];
+
+      return pages.map(function (page) {
+        var haystack = normalize(page.title + " " + page.label + " " + page.keywords);
+        var score = words.reduce(function (total, word) {
+          if (normalize(page.title).indexOf(word) !== -1) return total + 4;
+          if (normalize(page.label).indexOf(word) !== -1) return total + 2;
+          if (haystack.indexOf(word) !== -1) return total + 1;
+          return total;
+        }, 0);
+
+        return { page: page, score: score };
+      }).filter(function (item) {
+        return item.score > 0;
+      }).sort(function (a, b) {
+        return b.score - a.score;
+      }).slice(0, 5);
+    }
+
+    function render(query) {
+      var matches = getMatches(query);
+
+      if (!normalize(query)) {
+        search.classList.remove("is-open");
+        results.innerHTML = "";
+        return matches;
+      }
+
+      search.classList.add("is-open");
+
+      if (!matches.length) {
+        results.innerHTML = '<div class="site-search__empty">No matching pages</div>';
+        return matches;
+      }
+
+      results.innerHTML = matches.map(function (item) {
+        return '<a href="' + item.page.url + '"><strong>' + item.page.title + '</strong><span>' + item.page.label + '</span></a>';
+      }).join("");
+
+      return matches;
+    }
+
+    input.addEventListener("input", function () {
+      render(input.value);
+    });
+
+    input.addEventListener("focus", function () {
+      render(input.value);
+    });
+
+    search.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var matches = render(input.value);
+      if (matches.length) {
+        window.location.href = matches[0].page.url;
+      }
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!search.contains(event.target)) {
+        search.classList.remove("is-open");
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        search.classList.remove("is-open");
+        input.blur();
+      }
+    });
+  }
+
+  syncHeaderScrollBinding();
+  window.addEventListener("resize", syncHeaderScrollBinding);
+  if (desktopHeaderQuery.addEventListener) {
+    desktopHeaderQuery.addEventListener("change", syncHeaderScrollBinding);
+  } else if (desktopHeaderQuery.addListener) {
+    desktopHeaderQuery.addListener(syncHeaderScrollBinding);
+  }
 
   if (openButton) openButton.addEventListener("click", openMenu);
   if (closeButton) closeButton.addEventListener("click", closeMenu);
@@ -242,6 +424,7 @@
 
   initFormValidation();
   initDropdownNav();
+  initSiteSearch();
   initGallerySlider();
   initScrollCards();
   initReveal();

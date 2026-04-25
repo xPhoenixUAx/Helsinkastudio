@@ -559,4 +559,24 @@
   .hero__content h1 {
     font-size: clamp(40px, 13vw, 58px);
   }
+
+  .button--line {
+    padding-right: 56px;
+  }
+
+  .button--line::after {
+    right: 20px;
+    left: auto;
+    width: 24px;
+  }
+
+  .button--line::before,
+  .button--line:hover::before {
+    right: 16px;
+    left: auto;
+  }
+
+  .button--line:hover::after {
+    width: 28px;
+  }
 }
