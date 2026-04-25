@@ -159,6 +159,12 @@ summary {
   letter-spacing: .12em;
   text-align: center;
   text-transform: uppercase;
+  transition: color .22s var(--ease-out), background-color .22s var(--ease-out);
+}
+
+.solution-strip span:hover {
+  background: var(--color-surface);
+  color: var(--color-accent);
 }
 
 .solution-strip span:first-child {

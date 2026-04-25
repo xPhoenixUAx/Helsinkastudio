@@ -105,6 +105,12 @@
   letter-spacing: .12em;
   text-align: center;
   text-transform: uppercase;
+  transition: color .22s var(--ease-out), background-color .22s var(--ease-out);
+}
+
+.about-strip span:hover {
+  background: var(--color-surface);
+  color: var(--color-accent);
 }
 
 .about-strip span:first-child {

@@ -603,6 +603,18 @@
   display: none;
 }
 
+.service-block.icon-card::before {
+  display: block;
+  position: absolute;
+  top: clamp(26px, 4vw, 48px);
+  left: clamp(24px, 4vw, 54px);
+  margin: 0;
+}
+
+.service-block.icon-card h3 {
+  padding-top: 44px;
+}
+
 .service-block h3 {
   max-width: 360px;
   margin-bottom: 0;
