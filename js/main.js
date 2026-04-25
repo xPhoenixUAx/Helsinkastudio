@@ -430,6 +430,81 @@
     });
   }
 
+  function initAccordions() {
+    var detailsItems = Array.prototype.slice.call(document.querySelectorAll("details"));
+    if (!detailsItems.length) return;
+
+    detailsItems.forEach(function (details) {
+      var summary = details.querySelector("summary");
+      if (!summary || details.querySelector(".accordion-panel")) return;
+
+      var panel = document.createElement("div");
+      var inner = document.createElement("div");
+      panel.className = "accordion-panel";
+      inner.className = "accordion-panel__inner";
+
+      while (summary.nextSibling) {
+        inner.appendChild(summary.nextSibling);
+      }
+
+      panel.appendChild(inner);
+      details.appendChild(panel);
+
+      if (details.open) {
+        panel.style.height = inner.scrollHeight + "px";
+      }
+
+      summary.addEventListener("click", function (event) {
+        event.preventDefault();
+        if (details.dataset.animating === "true") return;
+
+        details.open ? closeDetails(details, panel, inner) : openDetails(details, panel, inner);
+      });
+    });
+
+    window.addEventListener("resize", function () {
+      detailsItems.forEach(function (details) {
+        if (!details.open) return;
+        var panel = details.querySelector(".accordion-panel");
+        var inner = details.querySelector(".accordion-panel__inner");
+        if (panel && inner) panel.style.height = inner.scrollHeight + "px";
+      });
+    });
+  }
+
+  function openDetails(details, panel, inner) {
+    details.dataset.animating = "true";
+    details.open = true;
+    panel.style.height = "0px";
+
+    window.requestAnimationFrame(function () {
+      panel.style.height = inner.scrollHeight + "px";
+    });
+
+    panel.addEventListener("transitionend", function handleTransition(event) {
+      if (event.propertyName !== "height") return;
+      panel.removeEventListener("transitionend", handleTransition);
+      panel.style.height = "auto";
+      details.dataset.animating = "false";
+    });
+  }
+
+  function closeDetails(details, panel, inner) {
+    details.dataset.animating = "true";
+    panel.style.height = inner.scrollHeight + "px";
+
+    window.requestAnimationFrame(function () {
+      panel.style.height = "0px";
+    });
+
+    panel.addEventListener("transitionend", function handleTransition(event) {
+      if (event.propertyName !== "height") return;
+      panel.removeEventListener("transitionend", handleTransition);
+      details.open = false;
+      details.dataset.animating = "false";
+    });
+  }
+
   body.classList.add("is-loaded");
 
   syncHeaderScrollBinding();
@@ -463,6 +538,7 @@
   initFormValidation();
   initDropdownNav();
   initSiteSearch();
+  initAccordions();
   initGallerySlider();
   initScrollCards();
   initReveal();

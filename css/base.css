@@ -817,6 +817,38 @@ p {
   color: rgba(255, 255, 255, .72);
 }
 
+.site-footer a {
+  position: relative;
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  transition: color .22s var(--ease-out), transform .22s var(--ease-out);
+}
+
+.site-footer a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -3px;
+  left: 0;
+  height: 1px;
+  background: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .22s var(--ease-out);
+}
+
+.site-footer a:hover,
+.site-footer a:focus {
+  color: #fff;
+  transform: translateX(4px);
+}
+
+.site-footer a:hover::after,
+.site-footer a:focus::after {
+  transform: scaleX(1);
+}
+
 .footer__brand {
   margin-bottom: 18px;
   line-height: 0;
@@ -854,6 +886,11 @@ p {
 
 .footer__bottom a + a {
   margin-left: 18px;
+}
+
+.footer__bottom a:hover,
+.footer__bottom a:focus {
+  transform: translateY(-2px);
 }
 
 input,
@@ -925,6 +962,80 @@ label {
 
 .form-message.is-success {
   color: #067647;
+}
+
+details {
+  border-top: 1px solid var(--color-line);
+  padding: 0;
+}
+
+details:last-child {
+  border-bottom: 1px solid var(--color-line);
+}
+
+summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 62px;
+  cursor: pointer;
+  color: var(--color-ink);
+  font-weight: 700;
+  list-style: none;
+  padding: 18px 42px 18px 0;
+  transition: color .22s var(--ease-out);
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  transform-origin: center;
+  transition: transform .28s var(--ease-out), color .22s var(--ease-out);
+}
+
+details:hover summary,
+details[open] summary {
+  color: var(--color-accent);
+}
+
+details[open] summary::after {
+  transform: rotate(225deg) translate(-2px, -2px);
+}
+
+.accordion-panel {
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    height .34s var(--ease-out),
+    opacity .24s var(--ease-out),
+    transform .34s var(--ease-out);
+}
+
+details[open] .accordion-panel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.accordion-panel__inner {
+  padding: 0 42px 22px 0;
+}
+
+.accordion-panel__inner > :last-child {
+  margin-bottom: 0;
 }
 
 .reveal {
