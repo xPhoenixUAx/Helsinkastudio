@@ -1,0 +1,14 @@
+<svg width="218" height="64" viewBox="0 0 218 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Helsinka Studio</title>
+  <desc id="desc">Helsinka Studio wordmark with a minimal H monogram and red digital route accent.</desc>
+  <g>
+    <rect x="2" y="7" width="50" height="50" rx="25" fill="#ffffff"/>
+    <rect x="17" y="18" width="5" height="28" rx="2.5" fill="#101010"/>
+    <rect x="32" y="18" width="5" height="28" rx="2.5" fill="#101010"/>
+    <path d="M21 33H33" stroke="#f0441f" stroke-width="4" stroke-linecap="round"/>
+    <path d="M28 15C34.5 15 40 20.5 40 27" stroke="#f0441f" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="40" cy="27" r="3" fill="#f0441f"/>
+  </g>
+  <text x="68" y="35" fill="#ffffff" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700" letter-spacing="-0.4">Helsinka</text>
+  <text x="70" y="51" fill="#f0441f" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" letter-spacing="3.6">STUDIO</text>
+</svg>
