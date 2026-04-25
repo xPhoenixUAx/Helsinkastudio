@@ -513,11 +513,12 @@ p {
   z-index: 200;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 0;
   background: var(--color-bg);
   transform: translateX(100%);
   transition: transform .24s ease;
   visibility: hidden;
+  overflow: hidden;
 }
 
 .mobile-menu.is-open {
@@ -526,21 +527,37 @@ p {
 }
 
 .mobile-menu__bar {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: var(--header-height);
+  padding: 0 24px;
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-bg);
 }
 
 .mobile-menu__nav {
   display: grid;
   gap: 18px;
-  margin-block: auto;
+  align-content: start;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(34px, 9vh, 72px) 24px 28px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-menu__nav > a:not(.button) {
   font-family: var(--font-serif);
   font-size: clamp(34px, 11vw, 64px);
   line-height: 1;
+}
+
+.mobile-menu__nav .button {
+  justify-self: start;
+  margin-top: 10px;
 }
 
 .mobile-menu__subnav {
@@ -560,7 +577,12 @@ p {
 }
 
 .mobile-menu__note {
+  flex: 0 0 auto;
   max-width: 440px;
+  margin: 0;
+  padding: 20px 24px 24px;
+  border-top: 1px solid var(--color-line);
+  background: var(--color-surface);
 }
 
 .card-grid {
@@ -795,5 +817,21 @@ label {
 
   .button {
     width: 100%;
+  }
+
+  .mobile-menu__bar {
+    padding-inline: 14px;
+  }
+
+  .mobile-menu__nav {
+    padding-inline: 14px;
+  }
+
+  .mobile-menu__note {
+    padding-inline: 14px;
+  }
+
+  .mobile-menu__nav .button {
+    justify-self: stretch;
   }
 }
