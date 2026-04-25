@@ -240,6 +240,49 @@
     window.addEventListener("resize", updateCards);
   }
 
+  function initParallaxBanners() {
+    var banners = Array.prototype.slice.call(document.querySelectorAll("[data-parallax-banner]"));
+    if (!banners.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    var ticking = false;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function updateParallax() {
+      var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+      banners.forEach(function (banner) {
+        var rect = banner.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > viewportHeight) return;
+
+        var bannerCenter = rect.top + (rect.height / 2);
+        var viewportCenter = viewportHeight / 2;
+        var depth = clamp((viewportCenter - bannerCenter) / viewportHeight, -1, 1);
+        var mediaShift = Math.round(depth * 140);
+        var contentShift = Math.round(depth * -36);
+        var frameShift = Math.round(depth * 22);
+
+        banner.style.setProperty("--parallax-y", mediaShift + "px");
+        banner.style.setProperty("--parallax-content-y", contentShift + "px");
+        banner.style.setProperty("--parallax-frame-y", frameShift + "px");
+      });
+
+      ticking = false;
+    }
+
+    function requestParallax() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateParallax);
+    }
+
+    updateParallax();
+    window.addEventListener("scroll", requestParallax, { passive: true });
+    window.addEventListener("resize", requestParallax);
+  }
+
   function initDropdownNav() {
     var dropdowns = Array.prototype.slice.call(document.querySelectorAll("[data-dropdown]"));
     if (!dropdowns.length) return;
@@ -691,5 +734,6 @@
   initCookieConsent();
   initGallerySlider();
   initScrollCards();
+  initParallaxBanners();
   initReveal();
 })();
